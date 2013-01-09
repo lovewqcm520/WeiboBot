@@ -6,7 +6,7 @@ package
 	import flash.display.Sprite;
 	import flash.events.Event;
 	
-	[SWF(width="800", height="600")]
+	[SWF(width="320", height="480")]
 	public class WeiboBot extends Sprite
 	{
 		public function WeiboBot()

@@ -3,6 +3,7 @@ package com.jack.weibobot
 	import com.sina.microblog.MicroBlog;
 	import com.sina.microblog.events.MicroBlogErrorEvent;
 	import com.sina.microblog.events.MicroBlogEvent;
+	import com.sina.microblog.events.WeiboServiceEvent;
 	
 	import flash.events.Event;
 	import flash.events.IOErrorEvent;
@@ -48,6 +49,16 @@ package com.jack.weibobot
 			_mb.consumerKey = "1104843535";
 			_mb.consumerSecret = "6abc114262e5f3ac9e2c84cf6714091b";
 			_mb.expires_in = expires_in;
+			
+			_mb.addEventListener(MicroBlogEvent.UPDATE_STATUS_RESULT, onUpdateStatusResult);
+			_mb.addEventListener(MicroBlogEvent.LOGIN_RESULT, onLoginResult);
+			
+			_mb.addEventListener(MicroBlogErrorEvent.UPDATE_STATUS_ERROR, onUpdateStatusError);
+			_mb.addEventListener(MicroBlogErrorEvent.LOGIN_ERROR, onLoginError);
+			
+			_mb.addEventListener(WeiboServiceEvent.UPDATE_RESULT, onUpdateResult);
+			_mb.addEventListener(WeiboServiceEvent.UPDATE_ERROR, onUpdateError);
+			
 			_mb.loginResult(access_token, expires_in);
 			
 			//创建一个对象，用与保存请求接口的参数
@@ -55,32 +66,64 @@ package com.jack.weibobot
 			//这个接口只需要一个参数，uid或者screen_name
 			obj.uid = uid;
 			//侦听成功调用的事件
-			_mb.addEventListener("onFriendsshipsResult", onFriendsshipsResult);
-			//侦听失败调用的事件
-			_mb.addEventListener("onFriendsshipsError", onFriendsshipsError);
-			//调用通用接口
-			_mb.callWeiboAPI("2/friendships/friends", obj, "GET",
-				"onFriendsshipsResult", "onFriendsshipsError");
+//			_mb.addEventListener("onFriendsshipsResult", onFriendsshipsResult);
+//			//侦听失败调用的事件
+//			_mb.addEventListener("onFriendsshipsError", onFriendsshipsError);
+//			//调用通用接口
+//			_mb.callWeiboAPI("2/friendships/friends", obj, "GET",
+//				"onFriendsshipsResult", "onFriendsshipsError");
 			
 			var timer:Timer = new Timer(1000);
 			timer.addEventListener(TimerEvent.TIMER, onTimer);
 			timer.start();
 			
-			// test 发送微博
-			var str:String = "Test upload text from my Flash AIR Application";
-			str += " at " + new Date().toString() + " !";
-			//_mb.updateStatus(str);
+//			// test 发送微博
+//			date = new Date();
+//			var str:String = "现在是" + date.hours + ":00点,Rose,我爱你，希望你能够嫁给我!" ;
+//			//str += " at " + new Date().toString() + " !";
+//			_mb.updateStatus(str);
+//			trace(str);
+		}
+		
+		protected function onUpdateError(event:WeiboServiceEvent):void
+		{
+			trace("onUpdateError");
+		}
+		
+		protected function onUpdateResult(event:WeiboServiceEvent):void
+		{
+			trace("onUpdateResult");
+		}
+		
+		protected function onLoginError(event:MicroBlogErrorEvent):void
+		{
+			trace("onUpdateResult", event.message);
+		}
+		
+		protected function onUpdateStatusError(event:MicroBlogErrorEvent):void
+		{
+			trace("onUpdateStatusError", event.message);
+		}
+		
+		protected function onLoginResult(event:MicroBlogEvent):void
+		{
+			trace("onLoginResult", event.result.access_token, event.result.expires_in, event.result.refresh_token);
+		}
+		
+		protected function onUpdateStatusResult(event:MicroBlogEvent):void
+		{
+			trace("onUpdateStatusResult");
 		}
 		
 		protected function onTimer(event:TimerEvent):void
 		{
 			date = new Date();
-			trace(date.hours, date.minutes, date.seconds);
+			//trace(date.hours, date.minutes, date.seconds);
 			if(date.minutes == 0 && date.seconds == 0)
 			{
 				//trace(date.hours, date.minutes, date.seconds);
 				// test 发送微博
-				var str:String = "现在是" + date.hours + ":00点，我爱你，希望你能够嫁给我!" ;
+				var str:String = "现在是" + date.hours + ":00点,Rose,我爱你，希望你能够嫁给我!" ;
 				//str += " at " + new Date().toString() + " !";
 				_mb.updateStatus(str);
 				trace(str);
